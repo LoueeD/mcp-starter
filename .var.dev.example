@@ -1,0 +1,12 @@
+# Copy to .var.dev, then run `npm run secrets` once to generate local keys.
+# Existing values are preserved; generated secrets are never printed.
+APP_NAME=MCP Starter
+ENVIRONMENT=development
+ENCRYPTION_KEY_VERSION=v1
+ENCRYPTION_KEYS=
+CEREMONY_KEY=
+# Local WebAuthn context. These override the hosted Wrangler vars in dev.
+WEBAUTHN_RP_ID=localhost
+WEBAUTHN_ORIGIN=http://localhost:8787
+# Optional: put a private MCP URL here for `npm run smoke`.
+# MCP_URL=https://mcp-starter.example.workers.dev/mcp/<account>.<token>

@@ -1,0 +1,37 @@
+{
+  "name": "mcp-starter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "WRANGLER_LOG_PATH=./.wrangler/logs wrangler dev --env-file .var.dev --log-level warn",
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "WRANGLER_LOG_PATH=./.wrangler/logs wrangler types --env-interface CloudflareBindings --env-file .var.dev.example",
+    "typecheck": "tsc --noEmit",
+    "test": "WRANGLER_LOG_PATH=./.wrangler/logs vitest run",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "check": "npm run lint && npm run typecheck && npm test",
+    "secrets": "node scripts/generate-secrets.mjs",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.3.1",
+    "@simplewebauthn/server": "14.0.3",
+    "hono": "^4.13.13",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@cloudflare/vitest-plugin": "1.9.2",
+    "@cloudflare/workers-types": "5.20261127.1",
+    "@modelcontextprotocol/client": "2.3.1",
+    "@types/node": "^26.6.4",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11",
+    "wrangler": "^4.169.0"
+  }
+}

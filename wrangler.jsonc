@@ -1,0 +1,63 @@
+/**
+ * Starter Cloudflare Worker configuration.
+ *
+ * Before the first deploy:
+ * 1. Change `name` to your Worker name.
+ * 2. Set WEBAUTHN_RP_ID / WEBAUTHN_ORIGIN to your exact hostname.
+ * 3. Add CEREMONY_KEY and ENCRYPTION_KEYS with `wrangler secret put`.
+ * 4. Keep the two rate-limit namespace ids unique within your account.
+ *
+ * Docs: https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mcp-starter",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-27",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "APP_NAME": "MCP Starter",
+    "ENVIRONMENT": "production",
+    "ENCRYPTION_KEY_VERSION": "v1",
+    "WEBAUTHN_RP_ID": "mcp-starter.example.workers.dev",
+    "WEBAUTHN_ORIGIN": "https://mcp-starter.example.workers.dev"
+  },
+  "ratelimits": [
+    {
+      "name": "PROVISIONING_LIMITER",
+      "namespace_id": "10001",
+      "simple": { "limit": 10, "period": 60 }
+    },
+    {
+      "name": "AUTH_LIMITER",
+      "namespace_id": "10002",
+      "simple": { "limit": 20, "period": 60 }
+    }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "ACCOUNTS", "class_name": "AccountStore" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["AccountStore"] }],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./public",
+    "run_worker_first": [
+      "/",
+      "/login",
+      "/signup",
+      "/how-it-works",
+      "/connections/*",
+      "/mcp/*",
+      "/api/*",
+      "/health"
+    ]
+  },
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "invocation_logs": false, "persist": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": false },
+    "issues": { "enabled": false },
+    "redact_query_string": true
+  },
+  "upload_source_maps": true
+}

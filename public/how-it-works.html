@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>How it works — MCP Starter</title>
+  <meta name="description" content="How this starter connects your app to an MCP client with passkeys, scoped connection URLs and encrypted app credentials.">
+  <link rel="icon" href="/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/setup.css">
+  <script src="/theme.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="/"><img src="/mark.svg" alt="" width="18" height="18">MCP Starter</a>
+      <div class="top-actions">
+        <button id="theme-toggle" class="icon" type="button" aria-label="Switch theme"></button>
+      </div>
+    </header>
+    <main id="main" class="explainer" tabindex="-1">
+      <h1>How this starter works</h1>
+      <p class="lede">One Worker, one account, one private MCP connection per client.</p>
+
+      <section aria-labelledby="connect-title">
+        <h2 id="connect-title">Connect in three steps</h2>
+        <ol>
+          <li>Create an account with a passkey and give the connection a name plus your app credential.</li>
+          <li>Copy the private MCP URL into your client’s custom MCP server form and choose <strong>No authentication</strong>.</li>
+          <li>Ask the agent to discover the available operations. It will use only what the connection is allowed to use.</li>
+        </ol>
+      </section>
+
+      <div class="flow">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 360 200" role="img" aria-label="MCP client to Worker to your app">
+          <rect x="8" y="70" width="92" height="60" rx="12" stroke="currentColor" stroke-width="2"/>
+          <text x="54" y="105" text-anchor="middle" fill="currentColor" font-size="13" font-family="inherit">MCP client</text>
+          <rect x="134" y="70" width="92" height="60" rx="12" stroke="currentColor" stroke-width="2"/>
+          <text x="180" y="98" text-anchor="middle" fill="currentColor" font-size="13" font-family="inherit">Worker</text>
+          <text x="180" y="116" text-anchor="middle" fill="currentColor" font-size="11" font-family="inherit">account + MCP</text>
+          <rect x="260" y="70" width="92" height="60" rx="12" stroke="currentColor" stroke-width="2"/>
+          <text x="306" y="105" text-anchor="middle" fill="currentColor" font-size="13" font-family="inherit">Your app</text>
+          <path d="M100 100h34M226 100h34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="m128 95 6 5-6 5M254 95l6 5-6 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="180" y="38" text-anchor="middle" fill="currentColor" font-size="11" font-family="inherit">tool calls over a private URL</text>
+          <text x="180" y="170" text-anchor="middle" fill="currentColor" font-size="11" font-family="inherit">encrypted credential, scoped access</text>
+        </svg>
+      </div>
+
+      <section aria-labelledby="tools-title">
+        <h2 id="tools-title">Three tools, one contract</h2>
+        <p>The MCP surface is intentionally small. Your app supplies the operations; the agent supplies the arguments.</p>
+        <dl>
+          <dt>discover</dt>
+          <dd>Return the operations this connection may use, with compact summaries by default, full JSON Schemas on request, and a cursor for larger operation sets.</dd>
+          <dt>execute_read</dt>
+          <dd>Run list and get operations. Results include pagination metadata so a partial page is never reported as complete.</dd>
+          <dt>execute_write</dt>
+          <dd>Run create, update and delete operations. Writes are validated, read back and never retried automatically when the outcome is uncertain.</dd>
+        </dl>
+        <p class="group">Discovery and execution both check the catalogue version and the connection revision. If either changed, the agent must rediscover before continuing.</p>
+      </section>
+
+      <section aria-labelledby="access-title">
+        <h2 id="access-title">You choose the access</h2>
+        <p><strong>Control access</strong> sets read, create, update and delete per resource for each connection. New connections start read-only. Write permissions also require read because every write is read back.</p>
+        <p>Changes apply on the next request. An agent with a stale catalogue receives a structured <code>SCHEMA_CHANGED</code> response and must rediscover. Operations outside the scope are not listed and cannot be called.</p>
+        <p>You can rename, rotate, disable, enable or revoke a connection. Anyone with the MCP URL can use its permitted operations, so keep it private and never put it in logs or analytics.</p>
+      </section>
+
+      <section aria-labelledby="behind-title">
+        <h2 id="behind-title">Behind the scenes</h2>
+        <p>A Hono app on Cloudflare Workers runs the account UI, the passkey ceremonies and a stateless MCP handler. Each account has its own SQLite Durable Object for passkeys, sessions, connections, access policy and the demo data.</p>
+        <p>The MCP URL contains an account prefix and a 256-bit secret. Only a SHA-256 hash of the secret is stored; the raw URL is shown once at creation or rotation. App credentials are encrypted with AES-GCM using a versioned keyring supplied as Worker secrets.</p>
+        <p>The MCP handler validates the token, connection revision and access policy on every request. It holds no session state between requests, so revocation takes effect immediately for new calls.</p>
+      </section>
+
+      <section aria-labelledby="replace-title">
+        <h2 id="replace-title">Replace the demo</h2>
+        <p>The notes resource is a runnable example, not a requirement. Change <code>src/app/catalogue.ts</code> to describe your operations, then replace <code>src/app/demo.ts</code> with calls to your API. The MCP layer, passkeys, connections and access controls stay the same.</p>
+        <p>Read the README and <code>docs/</code> for the exact seams, deployment steps, free-tier guidance and client setup.</p>
+      </section>
+
+      <p class="return-link"><a href="/login">← Back to log in</a></p>
+    </main>
+  </div>
+</body>
+</html>

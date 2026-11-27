@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>MCP Starter — Your connections</title>
+  <meta name="description" content="Create a private remote MCP server for your app with passkeys, connection URLs and explicit access scopes.">
+  <link rel="icon" href="/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/setup.css">
+  <script src="/theme.js" defer></script>
+  <script src="/setup.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="/"><img src="/mark.svg" alt="" width="18" height="18">MCP Starter</a>
+      <div class="top-actions">
+        <button id="theme-toggle" class="icon" type="button" aria-label="Switch theme"></button>
+        <button id="sign-out" type="button" hidden>Sign out</button>
+      </div>
+    </header>
+    <main id="main" tabindex="-1">
+      <section id="checking">
+        <h1>Connect your app to an MCP client.</h1>
+        <p class="lede">Checking your browser and account…</p>
+      </section>
+
+      <section id="unavailable" hidden>
+        <h1>Account setup is unavailable.</h1>
+        <p id="unavailable-message"></p>
+        <p><button id="check-again" class="text" type="button">Check again</button></p>
+      </section>
+
+      <section id="signed-out" hidden aria-labelledby="welcome-title">
+        <h1 id="welcome-title" tabindex="-1">Connect your app to an MCP client.</h1>
+        <p class="lede">Create a private MCP server for your app.</p>
+        <nav id="auth-switch" class="auth-switch" aria-label="Account access" data-mode="login">
+          <a id="login-link" href="/login" aria-current="page">Log in</a>
+          <a id="signup-link" href="/signup">Sign up</a>
+        </nav>
+        <div id="signup-panel" class="group" hidden>
+          <h2>Sign up</h2>
+          <p>Use a passkey to manage your connections.</p>
+          <form id="register-form">
+            <label for="account-label">Account name <span class="faint">optional</span></label>
+            <input id="account-label" maxlength="50" autocomplete="off" placeholder="My workspace">
+            <p><button class="primary" type="submit">Create account with passkey</button></p>
+          </form>
+        </div>
+        <div id="login-panel" class="group">
+          <h2>Log in</h2>
+          <p>Use your passkey to manage your connections.</p>
+          <p><button id="sign-in" class="secondary" type="button">Log in with passkey</button></p>
+          <p class="learn-link"><a href="/how-it-works">How this starter works</a></p>
+        </div>
+        <p id="signup-hint" class="hint" hidden>There is no email or password recovery. Add a second, independently usable passkey after creating your account.</p>
+      </section>
+
+      <section id="workspace" hidden aria-labelledby="workspace-title">
+        <div class="section-top">
+          <div><h1 id="workspace-title" tabindex="-1">Your connections</h1></div>
+        </div>
+
+        <section id="reveal" class="reveal" hidden aria-labelledby="reveal-title">
+          <p class="label">Ready to install</p>
+          <h2 id="reveal-title" class="title" tabindex="-1">Your MCP server URL</h2>
+          <p>This URL is shown once. Copy it before leaving or closing this panel.</p>
+          <label for="install-url">MCP server URL</label>
+          <div class="link-field">
+            <input id="install-url" readonly spellcheck="false" autocomplete="off">
+            <button id="copy-url" class="secondary" type="button">Copy</button>
+          </div>
+          <p class="hint">Anyone with this URL can use this connection. Keep it private and out of logs.</p>
+          <ol>
+            <li>Add a custom MCP server in your client.</li>
+            <li>Paste this URL and choose <strong>No authentication</strong>.</li>
+            <li>Ask the agent to discover the available operations.</li>
+          </ol>
+          <p><button id="close-reveal" class="text" type="button">Close URL panel</button></p>
+        </section>
+
+        <section id="connections-section" hidden aria-labelledby="connections-title">
+          <div class="section-top">
+            <h2 id="connections-title" tabindex="-1">Connections</h2>
+            <button id="refresh" class="text" type="button">Refresh list</button>
+          </div>
+          <div id="connection-list"></div>
+          <p><button id="more-connections" class="text" type="button" hidden>Load more connections</button></p>
+        </section>
+
+        <section aria-label="New connection">
+          <button id="create-connection" class="primary" type="button" aria-haspopup="dialog" aria-controls="connection-dialog">Create connection</button>
+          <button id="review-create" class="text" type="button" hidden>Review list before creating again</button>
+        </section>
+
+        <section aria-labelledby="passkeys-title">
+          <div class="section-top">
+            <h2 id="passkeys-title">Passkeys</h2>
+            <button id="add-passkey" class="text" type="button">Add passkey</button>
+          </div>
+          <div id="passkey-list"></div>
+        </section>
+
+        <aside id="recovery-banner" class="confirm" hidden>
+          <p><strong>Add a second passkey.</strong> If you lose access to your only passkey, you cannot recover this account. Add another independently usable key or device.</p>
+          <p><button id="recovery-add" class="text" type="button">Add another passkey</button></p>
+        </aside>
+      </section>
+
+      <section id="access-page" hidden aria-labelledby="access-title">
+        <p><a href="/">← Your connections</a></p>
+        <h1 id="access-title" tabindex="-1">Control access</h1>
+        <p id="access-name" class="lede"></p>
+        <p class="hint">Choose which operations this connection may use. Write permissions also require read because every write is read back. Changes apply immediately; ask the MCP client to rediscover afterwards.</p>
+        <p id="access-state" class="notice"></p>
+        <p id="access-error" class="error-text" role="alert" hidden></p>
+        <div class="actions">
+          <button id="access-refresh" type="button">Refresh</button>
+          <button id="access-readonly" type="button">Make all read-only</button>
+        </div>
+        <form id="access-form">
+          <div id="access-resources"></div>
+          <p><button id="access-save" class="primary" type="submit">Save access</button></p>
+        </form>
+      </section>
+
+      <div id="passkey-progress" class="notice" role="status" hidden>
+        <p>Waiting for your browser’s passkey prompt. If no prompt appears, cancel and try again.</p>
+        <button id="cancel-passkey" type="button" disabled>Cancel passkey request</button>
+      </div>
+      <p id="status" class="status" role="status" aria-live="polite" hidden></p>
+      <noscript><p>Enable JavaScript to sign in and manage your connections.</p></noscript>
+    </main>
+  </div>
+
+  <dialog id="connection-dialog" aria-labelledby="connection-dialog-title" aria-describedby="connection-dialog-copy">
+    <form id="connection-form" autocomplete="off">
+      <h2 id="connection-dialog-title" tabindex="-1">New connection</h2>
+      <p id="connection-dialog-copy">Give this connection a name and provide the app credential it should use.</p>
+      <label for="connection-name">Name</label>
+      <input id="connection-name" maxlength="100" autocomplete="off" value="My connection">
+      <label for="api-key">App credential</label>
+      <input id="api-key" class="api-key" type="password" required maxlength="8192" autocomplete="off" spellcheck="false" autocapitalize="none" aria-describedby="connection-key-hint">
+      <p id="connection-key-hint" class="hint">The demo accepts <code>demo_local_development</code>. Your credential is encrypted at rest and never appears in the MCP conversation.</p>
+      <div class="actions">
+        <button id="connection-cancel" type="button">Cancel</button>
+        <button id="create-connection-submit" class="primary" type="submit">Create connection</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="action-dialog" aria-labelledby="dialog-title">
+    <form id="action-form" autocomplete="off">
+      <h2 id="dialog-title" tabindex="-1">Connection action</h2>
+      <p id="dialog-copy"></p>
+      <div id="dialog-name-field" hidden>
+        <label for="dialog-name">Name</label>
+        <input id="dialog-name" maxlength="100" autocomplete="off">
+      </div>
+      <div id="dialog-key-field" hidden>
+        <label for="replacement-key">Replacement app credential</label>
+        <input id="replacement-key" class="api-key" type="password" maxlength="8192" autocomplete="off" spellcheck="false" autocapitalize="none">
+      </div>
+      <p id="dialog-error" class="error-text" role="alert" hidden></p>
+      <div class="actions">
+        <button id="dialog-cancel" type="button">Cancel</button>
+        <button id="dialog-submit" class="primary" type="submit">Confirm</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>
