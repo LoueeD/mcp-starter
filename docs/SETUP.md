@@ -156,6 +156,7 @@ Create two repository secrets:
 Notes:
 
 - The workflow uses `cloudflare/wrangler-action`. Pin or review the action version if your organisation requires it.
+- If the two Cloudflare secrets are missing, the deploy step is skipped with a notice instead of failing CI. Add the secrets when you are ready to deploy.
 - Optionally set a repository variable `DEPLOY_ORIGIN` (for example `https://mcp.example.com`) to enable the post-deploy health check. Without it, the deploy still runs and the check is skipped.
 - Tests do not need Cloudflare credentials; `vitest.config.ts` generates its own keys.
 - `wrangler deploy` preserves existing Worker secrets. Set `CEREMONY_KEY` and `ENCRYPTION_KEYS` once with `wrangler secret put`; do not put them in GitHub unless you deliberately want CI to manage them.
