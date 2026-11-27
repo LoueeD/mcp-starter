@@ -504,3 +504,9 @@ Update the client. This server speaks the current MCP revision and supports the 
 - [`docs/FREE_TIER.md`](docs/FREE_TIER.md) — limits and cost control.
 
 Use this starter as a starting point, not a finished product. Review the access scopes, operation set, logging and upstream credential handling for your own threat model before exposing it to users.
+
+---
+
+## License
+
+MIT. Use it for any project, commercial or otherwise. See [LICENSE](LICENSE).

@@ -2,6 +2,7 @@
   "name": "mcp-starter",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "WRANGLER_LOG_PATH=./.wrangler/logs wrangler dev --env-file .var.dev --log-level warn",
